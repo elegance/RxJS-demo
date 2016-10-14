@@ -1,5 +1,7 @@
 RxJS是ReactiveX的JavaScript版本，在观察者模式之上，实现了丰富的操作符，适用于各种情况下的序列数据处理。
 
+汇智：http://www.hubwiz.com/course/569d92e3acf9a45a69b05154/
+
 ### 扩展的观察者模式
 Reference for http://gank.io/post/560e15be2dca930e00da1083
 
