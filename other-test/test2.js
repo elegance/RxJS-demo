@@ -1,8 +1,10 @@
+const moment = require('moment');
 
 /*
  * 可被观察者
  */
 function Observable(generator) {
+    this.observers = [];
     this.generator = generator;
 }
 
@@ -12,7 +14,10 @@ function Observable(generator) {
 Observable.prototype = {
     constructor: Observable,
     subscribe: function(observer) {
-        this.generator.call(this, observer);
+        this.observers.push(observer);
+        if (!(this.observers.length > 1)) {
+            this.generator.call(this);
+        }
         return this;
     }
 }
@@ -44,7 +49,7 @@ function Xt(name) {
 Xt.prototype = {
     constructor: Xt,
     shenShou: function() {
-        console.log(`${this.name} 开始第${++this.counter}次伸手。`)
+        console.log(`${this.name} 开始第${++this.counter}次伸手(${moment(new Date()).format()})。`)
     }
 };
 
@@ -59,17 +64,17 @@ Jc.prototype = {
     }
 };
 
-
-
 var xt1 = new Xt('小偷1号');
 
 var jc1 = new Jc('警察No.1');
 var jc2 = new Jc('警察No.2');
 
 var xt1Observable = new Observable(function(observer) {
-    setInterval(function() {
+    var id = setInterval(function() {
         xt1.shenShou(); // 触发伸手
-        observer.onNotify(xt1); // 通知订阅的警察们，如果没有订阅者，那么这个方法也没有被执行
+        xt1Observable.observers.forEach((item) => {
+            item.onNotify(xt1); // 通知订阅的警察们，如果没有订阅者，那么这个方法也没有被执行
+        });
     }, 1000);
 });
 
