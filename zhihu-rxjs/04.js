@@ -15,3 +15,5 @@ const state$ = Rx.Observable
     article$,
     (me, article) => {me, article}
   )
+
+Rx.Observable.interval(100).map(2).subscribe((s) => console.log(s));
