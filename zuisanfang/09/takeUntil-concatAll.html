@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>事件监听</title>
+    <style>
+        div {
+            border: 1px solid blue;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="takeUntil-test">takeUntil-test(click me to stop takeUtil)</div>
+    <div id="concatAll-test">concatAll-test(click me)</div>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+        let source = Rx.Observable.interval(1000);
+        let click = Rx.Observable.fromEvent(document.querySelector('#takeUntil-test'), 'click');
+        let newest = source.takeUntil(click);
+
+        newest.subscribe({
+            next: (v) => console.log(`takeUtil: ${v}`),
+            complete: () => console.log('takeUtil complete!')
+        }); 
+
+        let click2 = Rx.Observable.fromEvent(document.querySelector('#concatAll-test'), 'click');
+        let source2 = click2.map(e => Rx.Observable.of(1, 2, 3));
+
+        source2.subscribe({
+            next: (v) => console.log(`map: ${v}`),
+            complete: () => console.log('map complete!')
+        }); 
+
+        let newest2 = source2.concatAll();
+        newest2.subscribe({
+            next: (v) => console.log(`concatAll: ${v}`),
+            complete: () => console.log('concatAll complete!')
+        }); 
+   </script>
+</body>
+</html>
