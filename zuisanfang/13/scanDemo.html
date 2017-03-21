@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>scan</title>
+</head>
+<body>
+    <button id="btnAdd">Add</button>   
+    <button id="btnMinus">Minus</button>
+    <h1 id="state"></h1>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+    const btnAdd = document.querySelector('#btnAdd');
+    const btnMinus = document.getElementById('btnMinus');
+    const state = document.getElementById('state');
+
+    const addClick = Rx.Observable.fromEvent(btnAdd, 'click').mapTo(1);
+    const minusClick = Rx.Observable.fromEvent(btnMinus, 'click').mapTo(-1);
+
+    const numberState = Rx.Observable.empty()
+        .startWith(0)
+        .merge(addClick, minusClick)
+        .scan((acc, val) => acc + val, 0);
+    
+    numberState.subscribe({
+        next: (v) => { state.innerHTML = v},
+        error: (err) => { console.log('Error:', err)},
+        complete: () => { console.log('complete')}
+    });
+
+
+   </script>
+</body>
+</html>
