@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>buffer</title>
+</head>
+<body>
+    <button id="demo">500ms内单击两次</button>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+       const btnDemo = document.getElementById('demo');
+       
+       const demoClick = Rx.Observable.fromEvent(btnDemo, 'click');
+
+       const example = demoClick
+        .bufferTime(500)
+        .filter(arr => arr.length >= 2);
+        
+        example.subscribe({
+            next: (v) => { console.log('success', v);}
+        });
+   </script>
+</body>
+</html>
