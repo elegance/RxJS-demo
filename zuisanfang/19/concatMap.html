@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title id="title">concatMap</title>
+</head>
+<body>
+    concatMap其实就是map加上concatAll的简化写法
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+    const click = Rx.Observable.fromEvent(document, 'click');
+
+    // 每次点击 map成一个 Observable，再concatAll 将二维Observable 摊成1维输出
+    const example = click.concatMap(e => Rx.Observable.interval(100).take(3));
+
+    example.subscribe({
+        next: v => console.log(v),
+        error: err => console.error('Error:', err),
+        complete: () => console.log('complete')
+    });
+   </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title id="title">switchMap</title>
+</head>
+<body>
+    switchMap 其实就是map加上switch简化的写法
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+    function getPostData() {
+        return fetch('https://jsonplaceholder.typicode.com/posts/1?_' + new Date().getTime(), {cache: 'no-cache'})
+                .then(res => res.json());
+    }
+    const click = Rx.Observable.fromEvent(document, 'click');
+
+    // click 的每一次点击都会 返回一个 持续的Observable.interval(1000)
+    const example = click
+                       .switchMap(e => getPostData()); //只处理最后一次request返回的请求
+
+    example.subscribe({
+        next: v => console.log(v),
+        error: err => console.error('Error:', err),
+        complete: () => console.log('complete')
+    });
+   </script>
+</body>
+</html>

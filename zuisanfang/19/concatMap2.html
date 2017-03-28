@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title id="title">concatMap 应用</title>
+</head>
+<body>
+    每次点击就发送出HTTP request，如果快速连续点击，则等待前一个request完成才发起下一个请求
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+    function getPostData() {
+        return fetch('https://jsonplaceholder.typicode.com/posts/1?_' + new Date().getTime(), {cache: 'no-cache'})
+                .then(res => res.json());
+    }
+    const click = Rx.Observable.fromEvent(document.body, 'click');
+
+    // 每次点击 map成一个 Observable，再concatAll 将二维Observable 摊成1维输出
+    const example = click.concatMap(
+            e => getPostData(),
+            (e, res, eIndex, resIndex) => res.title);
+
+    example.subscribe({
+        next: v => console.log(v),
+        error: err => console.error('Error:', err),
+        complete: () => console.log('complete')
+    });
+   </script>
+</body>
+</html>
