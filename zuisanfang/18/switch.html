@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title id="title">switch</title>
+</head>
+<body>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+    const click = Rx.Observable.fromEvent(document, 'click');
+
+    // click 的每一次点击都会 返回一个 持续的Observable.interval(1000)
+    const source = click.map(e => Rx.Observable.interval(1000));
+
+    // switch 同样能把二维的Observable摊平成一维的
+    // 但是它会在新的Observable送出后直接处理新的Observable，不管前一个Observable是否完成
+    // 每当有新的Observable送出，就会把旧的Observable退订
+    // 永远只处理最新的observable
+    const example = source.switch(); 
+    example.subscribe({
+        next: v => console.log(v),
+        error: err => console.error('Error:', err),
+        complete: () => console.log('complete')
+    });
+   </script>
+</body>
+</html>

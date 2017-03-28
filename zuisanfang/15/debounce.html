@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>debounce</title>
+</head>
+<body>
+    <input type="text" id="iptSearch">
+    <h4 id="reqValue"></h4>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+       const iptSearch = document.getElementById('iptSearch');
+       const reqValue = document.getElementById('reqValue');
+
+       Rx.Observable.fromEvent(iptSearch, 'input')
+        .debounceTime(300)  //注释这一行 对比下效果
+        .map(e => e.target.value)
+        .subscribe((v) => {
+            reqValue.innerHTML += 'send request value 【' + v + '】... <br>';
+        });
+   </script>
+</body>
+</html>

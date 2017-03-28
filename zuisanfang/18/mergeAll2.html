@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title id="title">mergeAll</title>
+</head>
+<body>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+    const click = Rx.Observable.fromEvent(document, 'click');
+
+    // click 的每一次点击都会 返回一个 持续的Observable
+    const source = click.map(e => Rx.Observable.interval(1000).take(3));
+
+    // mergeAll 会把二维的Observable转成一维的，并且能够同时处理所有的observable
+    // mergeAll(num) 传入数值，代表可同时处理的Observable数量
+    // 并行处理的Observable最大为两个，新送出的Observable等之前的一个Observable，再去处理
+    const example = source.mergeAll(2); 
+    example.subscribe({
+        next: v => console.log(v),
+        error: err => console.error('Error:', err),
+        complete: () => console.log('complete')
+    });
+   </script>
+</body>
+</html>

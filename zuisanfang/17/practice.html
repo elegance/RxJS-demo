@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title id="title">catch</title>
+</head>
+<body>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+       const title = document.getElementById('title');
+
+       const source = Rx.Observable.from(['a', 'b', 'c', 'd', 2])
+                        .zip(Rx.Observable.interval(500), (x, y) => x)
+                        .map(x => x.toUpperCase());
+                        // 通常 source 会是创建即时同步的连接，像是websocket
+        
+        const example = source.catch(
+                                    (err, obs) => {
+                                        return Rx.Observable.empty()
+                                            .startWith('连接发生错误： 5秒后重连')
+                                            .concat(obs.delay(5000))
+                                    });
+        example.subscribe({
+            next: (v) => { title.innerText = v;},
+            complete: () => { console.log('complete!')},
+            error: err => console.log('Error:', err) 
+        });
+   </script>
+</body>
+</html>

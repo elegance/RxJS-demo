@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title id="title">concatAll</title>
+</head>
+<body>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+    const click = Rx.Observable.fromEvent(document, 'click');
+
+    // click 的每一次点击都会 返回一个 Observable
+    const source = click.map(e => Rx.Observable.interval(1000).take(3));
+
+    // concatAll 会把source 摊平成一维的Observable
+    // 但是concatAll 会一个一个处理，等待前一个 Observable处理完成后才会处理下一个Observable
+    const example = source.concatAll(); 
+    example.subscribe({
+        next: v => console.log(v),
+        error: err => console.error('Error:', err),
+        complete: () => console.log('complete')
+    });
+   </script>
+</body>
+</html>
