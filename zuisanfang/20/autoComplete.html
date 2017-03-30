@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Auto Complete 实战</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="autocomplete">
+        <input type="search" class="input" id="search" autocomplete="off">
+        <ul id="suggest-list" class="suggest"></ul>
+    </div>
+   <script src="https://cdn.bootcss.com/rxjs/5.2.0/Rx.min.js"></script> 
+   <script>
+       const url = 'https://zh.wikipedia.org/w/api.php?action=opensearch&format=json&limit=5&origin=*';
+       const getSuggestList = (keyword) => fetch(url + '&search=' + keyword, {method: 'GET', mode: 'cors'})
+                                            .then(res => res.json());
+
+       // 取相关DOM
+       const iptSearch = document.getElementById('search');
+       const divSuggest = document.getElementById('suggest-list');
+
+       const render = (suggestArr = []) => {
+           divSuggest.innerHTML = suggestArr
+                                    .map(item => `<li>${item}</li>`)
+                                    .join('');
+       };
+
+       // 创建 所需 Observable
+       const keyword = Rx.Observable.fromEvent(iptSearch, 'input');
+       const selectItem = Rx.Observable.fromEvent(divSuggest, 'click');
+
+       // 创建程序逻辑
+       keyword
+        .debounceTime(300) //打完字等待300毫秒再触发请求
+        .switchMap(
+                    e => getSuggestList(e.target.value),
+                    (e, res) => res[1]
+                  )
+        .subscribe(list => render(list));    
+
+       // 至此，可以看到搜索建议的展示
+
+       selectItem
+        .filter(e => e.target.matches('li'))
+        .map(e => e.target.innerText)
+        .subscribe(text => {
+            iptSearch.value = text
+            render(); //默认空数组
+        });
+   </script>
+</body>
+</html>
