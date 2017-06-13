@@ -17,6 +17,7 @@
     //    // 注册监听
     //    document.body.addEventListener('click', handler);
 
+    // 针对 dom event、xmlhttprequest、fetch、websocket等不同的异步api，通过rxjs就能用同样的api操作了
        Rx
         .Observable
         .fromEvent(document.body, 'click') //注册监听

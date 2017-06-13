@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>模拟输入框搜索</title>
+</head>
+<body>
+    <input type="search" id="search">
+    <h4 id="reqHis"></h4>
+    
+
+    <script src="http://cdn.bootcss.com/rxjs/5.3.1/Rx.min.js"></script>
+    <script>
+        // 分享 demo 参考：https://github.com/joeyguo/blog/issues/11
+
+        const searchDOM = document.querySelector('#search');
+        const reqHis = document.getElementById('reqHis');
+
+        // 初版 1.
+        // searchDOM.addEventListener('input', (e) => {
+        //      reqHis.innerHTML += `send request value 【${e.target.value}】... <br>`;
+        // });
+        // 问题 有几次输入就会发出几次请求
+
+        // 改进版2.
+        // let timer = null;
+        // searchDOM.addEventListener('input', (e) => {
+        //     clearTimeout(timer);
+
+        //     timer = setTimeout(() => {
+        //          reqHis.innerHTML += `send request value 【${e.target.value}】... <br>`;
+        //     }, 300);
+        // });
+        // 此处还有几个问题 参加原 demo
+
+        // 版本3：rxjs
+        Rx.Observable
+            .fromEvent(searchDOM, 'input') //监听事件
+            .debounceTime(300) // 等待300 , 想一下它与throttleTime 有什么区别呢
+            // .throttleTime(300) // 一开始按下就会输出，按下不动会每个300输出
+            .map(e => e.target.value)
+            .subscribe((v) => {
+                reqHis.innerHTML += `send request value 【${v}】... <br>`;
+            });
+    </script>
+</body>
+</html>

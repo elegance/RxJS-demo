@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    html, body {
+        height: 100%;
+    }
+    #drag {
+        width: 100px;
+        height: 100px;
+        background-color: tomato;
+        position: relative;
+        cursor: all-scroll;
+    }
+</style>
+<body>
+    <div id="drag"></div>
+
+    <script src="http://cdn.bootcss.com/rxjs/5.3.1/Rx.min.js"></script>
+    <script>
+        var dragDOM = document.querySelector('#drag');
+        var body = document.body;
+
+        var mouseDown = Rx.Observable.fromEvent(dragDOM, 'mousedown'); // 元素上鼠标按下
+        var mouseMove = Rx.Observable.fromEvent(body, 'mousemove'); // body 鼠标移动
+        var mouseUp = Rx.Observable.fromEvent(body, 'mouseup'); // body 鼠标松开
+        Rx.Observable.fromEvent(body, 'mouseleave')
+
+        mouseDown
+            .map(event => mouseMove.takeUntil(mouseUp)) // 丢弃 mousedown，接收drag冒泡触发的body mousemove，直到mouseUp事件触发
+            .concatAll()
+            .map(e => {
+                console.log(`${e.type}, ${e.eventPhase}, ${e.target}, ${e.currentTarget}, ${e.offsetX}`);
+                return e;
+            })
+            .scan((origin, next) => {
+                if (origin === null) {
+                    return {offsetX: next.offsetX, offsetY: next.offsetY, move: false}; // 保存mouseDown时 鼠标相对 drag的元素偏移量(否则元素会直接跳到鼠标按下的位置)
+                }
+                return Object.assign(origin, {x: next.pageX - origin.offsetX, y: next.pageY - origin.offsetY, move: true}); //减去上面保存的偏移量
+            }, null)
+            .filter(pos => pos.move)
+            .subscribe(pos => {
+                dragDOM.style.left = pos.x + 'px';
+                dragDOM.style.top = pos.y + 'px';
+            });
+        
+    </script>
+</body>
+</html>

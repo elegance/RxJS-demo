@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>combineLatest- BMI动态计算</title>
+    <style>
+        table {
+            border-spacing: 0px;
+            border-collapse: separate;
+            width: 300px;
+            border: 0px;
+            float: right;
+        }
+       thead {
+            background-color: #8DD8F8;
+        }
+        tr.normal {
+            background-color: #66cc00;
+        }
+        tr.danger {
+            background-color: #ffff00;
+        }
+        tr.error {
+            background-color: #ff9900;
+        }
+        #bmi::before {
+            content: 'BMI:';
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <b>非完善，可以自行完善js</b><br>
+    身高：<input type="text" id="height"> cm<br> 体重：
+    <input type="text" id="weight"> kg<br> 年龄：0
+    <input type="range" value="18" id="age" min="0" max="30">30 目前：<span id="ageSpan">30</span>
+
+    <h3 id="bmi"></h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>分类</th>
+                <th>BMI 范围</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="danger">
+                <td></td>
+                <td>偏瘦</td>
+                <td>&lt;= 18.4</td>
+            </tr>
+            <tr class="normal">
+                <td></td>
+                <td>正常</td>
+                <td>18.5 ~ 23.9</td>
+            </tr>
+            <tr class="danger">
+                <td></td>
+                <td>过重</td>
+                <td>24.0 ~ 27.9</td>
+            </tr>
+            <tr class="error">
+                <td></td>
+                <td>肥胖</td>
+                <td>&gt;= 28.0</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="http://cdn.bootcss.com/rxjs/5.3.1/Rx.min.js"></script>
+    <script>
+        // 模拟的身高体重数据
+        function ageToHeightWeight(ageNum) {
+            let hidx = ageNum >= heightsLen ? (heightsLen - 1) : ageNum;
+            let widx = ageNum >= weightsLen ? (weightsLen - 1) : ageNum;
+            return {
+                height: heights[hidx],
+                weight: weights[widx]
+            };
+        }
+
+        const heights = [76, 88, 96, 104, 111, 117, 124, 130, 135, 140, 145, 151, 159, 165, 169, 171, 172, 172];
+        const weights = [10, 12, 14, 16, 18, 21, 24, 27, 30, 33, 37, 42, 48, 53, 57, 59, 60, 61,/* 大学:*/ 65, 70, 72, 75, /*工作：*/75, 78, 80, 83, 87, 88, 89, 90];
+        const heightsLen = heights.length;
+        const weightsLen = weights.length;
+        
+
+        // code ...
+        const ageDOM = document.querySelector('#age');
+        const heightDOM = document.querySelector('#height');
+        const weightDOM = document.querySelector('#weight');
+        const ageSpan = document.querySelector('#ageSpan')
+        const bmiDOM = document.querySelector('#bmi');
+
+        let ageObs = Rx.Observable.fromEvent(ageDOM, 'input').map(e => e.target.value); // 年龄变化
+
+        Rx.Observable.empty()
+            .startWith(ageDOM.value)
+            .merge(ageObs)
+            .subscribe(ageObserver);
+
+        function ageObserver(v) {
+            ageSpan.innerHTML = v;
+            var info = ageToHeightWeight(v);
+            heightDOM.value = info.height;
+            weightDOM.value = info.weight;
+            // bmiDOM.innerHTML = (info.weight / Math.pow((info.height/100), 2)).toFixed(2);
+        }
+
+        // 优化界面：调整无效
+        let heightObs = Rx.Observable.fromEvent(heightDOM, 'input').map(e => (e.target.value) / 100); // 身高变化,取值并转化为 单位m
+        let weightObs = Rx.Observable.fromEvent(weightDOM, 'input').map(e => e.target.value); // 体重变化
+
+        heightObs.combineLatest(weightObs, (h, w) => {
+            return w / (h * h)
+        })
+        .map(v => v.toFixed(2))
+        .subscribe(bmi => bmiDOM.innerHTML = bmi);
+    </script>
+</body>
+
+</html>

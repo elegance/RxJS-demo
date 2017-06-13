@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script src="http://cdn.bootcss.com/rxjs/5.3.1/Rx.min.js"></script>
+    <script>
+        var observer = {
+            next: (v) => console.log(v),
+            error: console.log,
+            complete: console.log('complete')
+        };
+
+        // Rx.Observable.of(1, 2, 3).subscribe(observer);
+        // Rx.Observable.interval(1000);//.subscribe(observer);
+        // var source = Rx.Observable.create((observer) => {
+        //     observer.next('hello');
+        //     // observer.error('er'); observer.complete();
+        //     setTimeout(() => {
+        //         observer.next('timeout')
+        //     }, 1000)
+            
+        // });
+        // console.log('start');
+        // source.subscribe({
+        //     next: (v) => console.log(v),
+        //     error: console.log,
+        //     complete: console.log('complete')
+        // });
+        // console.log('end');
+    </script>
+</body>
+</html>

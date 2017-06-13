@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>rxjs/moment 结合更新过去时间</title>
+</head>
+<body>
+    查看控制台
+    <script src="http://cdn.bootcss.com/rxjs/5.3.1/Rx.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/locale/zh-cn.js"></script>
+    
+    <script>
+        var createAt = Date.now();
+        Rx.Observable.interval(1000).subscribe(() => {
+            console.log(moment(createAt).fromNow()); //
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>指定时间间隔内限定点击次数</title>
+</head>
+<body>
+    <input type="button" value="Click Me-每秒内只允许点击1次">
+
+    <script src="http://cdn.bootcss.com/rxjs/5.3.1/Rx.min.js"></script>
+    <script>
+        var button = document.querySelector('body > input[type="button"]');
+
+        // solution 1:
+        var count = 0, rate = 1000, lastClick = Date.now() - rate;
+
+        // button.addEventListener('click', () => {
+        //     if (Date.now() - lastClick >= rate) { // 间隔超过了 rate 即 1秒
+        //         console.log(`Clicked ${++count} times`);
+        //         lastClick = Date.now(); // 更新最后时间
+        //     }
+        // });
+
+        // solution 2:
+        Rx.Observable.fromEvent(button, 'click')
+            .throttleTime(1000) // 节流1秒
+            .scan((count) => count + 1, 0) // 做累加
+            .subscribe(count => console.log(`Clicked ${count} times`));
+
+        // 如果现在要去除这种限定了？ 发现没有 rx将这些操作的步骤抽象的很好，只需要注释掉28行即可
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>按钮加减数字</title>
+</head>
+<body>
+    <button id="addBtn">Add</button>
+    <button id="minusBtn">Minus</button>
+    <h1 id="state"></h1>
+    <script src="http://cdn.bootcss.com/rxjs/5.3.1/Rx.min.js"></script>
+    <script>
+        const addBtn = document.querySelector('#addBtn');
+        const minusBtn = document.querySelector('#minusBtn');
+        const state = document.querySelector('#state');
+
+        const addClick = Rx.Observable.fromEvent(addBtn, 'click').mapTo(1);
+        const minusClick = Rx.Observable.fromEvent(minusBtn, 'click').mapTo(-1);
+
+        const numberState = Rx.Observable.empty() // 初始为的observable
+            .startWith(0) // 开始发送结果为0 
+            .merge(addClick, minusClick) // 这个observable 受 addClick、minusBtn 两个observa的影响
+            .scan((origin, next) => origin + next, 0);
+        
+        numberState.subscribe((v) => state.innerHTML = v);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>纯函数魅力体现</title>
+</head>
+<body>
+    <input type="button" value="Click Me">
+
+    <script src="http://cdn.bootcss.com/rxjs/5.3.1/Rx.min.js"></script>
+    <script>
+        // 控制台-打印点击次数
+        var button = document.querySelector('body > input[type="button"]');
+
+        // solution 1:
+        // 通常情况下你会创造一个非纯粹的函数，然后你的代码的其他部分可能搞乱你的程序状态
+        // var count = 0;
+        // button.addEventListener('click', () => console.log(`Clicked ${++count} times`));
+
+        // solution 2:
+        Rx.Observable.fromEvent(button, 'click')
+            .scan((count) => count + 1, 0) // 参数化传入
+            .subscribe(count => console.log(`Clicked ${count} times`)); // 参数化传出
+
+        // scan 类 array的reduce --> reduce(fn(acc, next), initialV)
+
+        // 不要 “走火入魔”，这里只是为了体现 rxjs 中函数式的意义，对于这种较为简单的 我们上面的方案暂时还是可行的。
+        // 场景简单、不会经常调整来应对复杂需求的，应该是大多数的 简单的 ajax、事件绑定等
+        
+        // 几种级别：
+        // 1. 深度使用来编写核心框架，如angular2、vue-rx、redux-rx等
+        // 2. 团队水平高，在应用中广泛使用
+        // 3. 应用中适度的使用解决相应的问题 ，不要不分场景试验田式的使用，提升门罕与不合适的问题，就像一些js的“怪异写法”，再比如 很久前在项目后台用了反射巧妙的解决一些问题
+        // 4. 认识其思想，看到这类代码不怵
+        // -- 完全不认识，不利于认识一些现在一些主流的框架思想。就像没有字符编码知识，没有bit/byte的概念，就不会太懂源码中的字节操作、位操作的意义，没有java线程知识的认识，就不会了解StringBuilder/StringBuffer的区别等等，了解这些有助于提升。
+        // -- 基础知识：字符编码原理、TCP/IP 、HTTP、Linux.. 扯远了..
+        // 随大流，追随上层主流框架，不了解其本质，学习成本高，而且现在更新迭代快。
+
+    </script>
+</body>
+</html>
